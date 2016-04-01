@@ -18,28 +18,30 @@ graph.cypher.execute('CREATE CONSTRAINT ON (track:Track) ASSERT track.id IS UNIQ
 graph.cypher.execute('CREATE CONSTRAINT ON (tag:Tag) ASSERT tag.name IS UNIQUE')
 
 # uniqueness constraints for conceptnet data
-graph.cypher.execute('CREATE CONSTRAINT ON (concept:Concept) ASSERT concept.name IS UNIQUE')
+graph.cypher.execute('CREATE CONSTRAINT ON (concept:Concept) ASSERT concept.id IS UNIQUE')
 
 # Concept Import Query
 addConceptNetData = """
 WITH {json} AS document
 UNWIND document.edges AS edges
 WITH 
-SPLIT(edges.start,"/")[3] AS startConcept,
+edges.start as startID,
 SPLIT(edges.start,"/")[2] AS startLanguage,
+SPLIT(edges.start,"/")[3] AS startConcept,
 SPLIT(edges.start,"/")[4] AS startPartOfSpeech,
 SPLIT(edges.start,"/")[5] AS startSense,
 SPLIT(edges.rel,"/")[2] AS relType,
 edges.surfaceText AS surfaceText,
 edges.weight AS weight,
-SPLIT(edges.end,"/")[3] AS endConcept,
+edges.end as endID,
 SPLIT(edges.end,"/")[2] AS endLanguage,
+SPLIT(edges.end,"/")[3] AS endConcept,
 SPLIT(edges.end,"/")[4] AS endPartOfSpeech,
 SPLIT(edges.end,"/")[5] AS endSense
-MERGE (start:Concept { name:startConcept })
-ON CREATE SET start.language = startLanguage, start.partOfSpeech=startPartOfSpeech, start.sense=startSense
-MERGE (end:Concept  {name:endConcept})
-ON CREATE SET end.language=endLanguage, end.partOfSpeech=endPartOfSpeech, end.sense=endSense
+MERGE (start:Concept { id:startID })
+ON CREATE SET start.name = startConcept, start.language = startLanguage, start.partOfSpeech=startPartOfSpeech, start.sense=startSense
+MERGE (end:Concept  {id:endID})
+ON CREATE SET end.name = endConcept, end.language=endLanguage, end.partOfSpeech=endPartOfSpeech, end.sense=endSense
 MERGE (start)-[r:ASSERTION]->(end)
 ON CREATE SET r.type = relType, r.weight=weight, r.surfaceText=surfaceText
 """
