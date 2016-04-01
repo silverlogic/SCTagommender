@@ -12,6 +12,11 @@ If you're not running Neo4j on a server, you can set it up locally by [downloadi
 
 ## Skip the APIs and play with some sample data
 
+* Get your [SoundCloud id](https://developers.soundcloud.com/docs/api/guide) and update `/settings`
+* `pip install -r requirements.txt`
+* Have a Neo4j database running
+* `python legacy_import.py`
+
 ## The Model
 
 ### Nodes
@@ -34,7 +39,7 @@ permalink_url: https://soundcloud.com/sleepwithmepodcast/rains-of-castamere-game
 
 Tag
 
-* name: the name of the tag (for example, “story”)
+* `name`: the name of the tag (for example, “story”)
 
 Concept
 
@@ -94,12 +99,6 @@ RETURN n.name AS `Concept`, n.sense AS `in the sense of`, m.name AS `Has Antonym
 ORDER BY r.weight DESC, n.sense ASC
 LIMIT 10
 ```
-
-## ConceptNet and SoundCloud APIs
-
-### Import data from ConceptNet
-
-### Import data from SoundCloud
 
 ## Sample Queries
 
