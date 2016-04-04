@@ -10,7 +10,15 @@ Originally [based on this blog post](http://neo4j.com/blog/soundcloud-recommenda
 
 If you're not running Neo4j on a server, you can set it up locally by [downloading Neo4j](http://neo4j.com/download/) and following the setup instructions.
 
-## Skip the APIs and play with some sample data
+## Load database using the Neo4j import tool
+
+```
+neo4j-import --into soundcloud-db --ignore-empty-strings --nodes:Concept csv/concept_nodes.csv --nodes:Tag csv/tag_nodes.csv --nodes:Track csv/track_nodes.csv --relationships:HAS_TAG csv/HAS_TAG.csv --relationships:HAS_CONCEPT csv/HAS_CONCEPT.csv --relationships:ASSERTION csv/ASSERTION_2.csv --relationships csv/ASSERTION.csv 
+```
+
+Start the database!
+
+## Load database using the SoundCloud and ConceptNet APIs
 
 * Get your [SoundCloud id](https://developers.soundcloud.com/docs/api/guide) and update `/settings`
 * `pip install -r requirements.txt`
@@ -99,8 +107,6 @@ RETURN n.name AS `Concept`, n.sense AS `in the sense of`, m.name AS `Has Antonym
 ORDER BY r.weight DESC, n.sense ASC
 LIMIT 10
 ```
-
-## Sample Queries
 
 ## Resources
 

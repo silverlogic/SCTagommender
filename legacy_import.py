@@ -10,7 +10,7 @@ client = soundcloud.Client(client_id=SOUNDCLOUD_CLIENT_ID)
 authenticate("localhost:7474", NEO4J_USERNAME, NEO4J_PASSWORD)  
 graph = Graph()
 
-page_size = '10'
+page_size = '100'
 search_query = 'ambient'	#or whatever you want your database to be about
 
 # uniqueness constraints for soundcloud data
@@ -64,19 +64,15 @@ MERGE (tag)-[:HAS_CONCEPT]->(Concept)
 RETURN track.title, tag.name, Concept.sense
 """
 
-# Updating names: Making sure they are in there from ConceptNet
 tracks = client.get('/tracks', order='created_at', limit=page_size, q=search_query)
 for track in tracks:
 	tags = list(set(shlex.split(track.tag_list.lower())))
 
 	graph.cypher.execute(addSoundCloudTrack, trackTitle=track.title, trackID=track.id, trackPlaybackCount=track.playback_count, trackPermalinkUrl=track.permalink_url)
 
-	# move someplace else, here there's a lot of repeated work
 	for tag in tags:
-		# add ConceptNet stuff if necessary (add control so that same tag doesn't get added a billion times)
 		searchURL = "http://conceptnet5.media.mit.edu/data/5.4/c/en/" + tag.replace(' ','_') + "?limit=" + page_size
 		searchJSON = requests.get(searchURL, headers = {"accept":"application/json"}).json()
 		graph.cypher.execute(addConceptNetData, json=searchJSON)
 
-		# connect soundcloud tag to namenet name
 		graph.cypher.execute(addSoundCloudTag, tagName=tag, trackID=track.id, conceptName=tag.replace(' ','_'))
