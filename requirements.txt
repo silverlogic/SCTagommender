@@ -1,0 +1,7 @@
+soundcloud
+six
+requests
+simplejson
+py2neo
+csv
+shlex
